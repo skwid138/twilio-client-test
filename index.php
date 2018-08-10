@@ -35,10 +35,7 @@
 
 
 <div style="margin-top: 18rem; margin-left: 7rem; color: white;">
-
-    <div>
-		<?php include('./functions.php'); ?>
-    </div>
+	<?php include('./functions.php'); ?>
 
     <h1>Queues</h1>
 
@@ -56,14 +53,8 @@
 			<?php foreach ($task_queues as $queue): ?>
 
 				<?php
-				$all_tasks = $workspace->tasks->read([
-					'TaskQueueName' => $queue->friendlyName
-				]);
-
-                $unanswered_tasks = $workspace->tasks->read([
-					'TaskQueueName' => $queue->friendlyName,
-                    'AssignmentStatus' => ['pending', 'reserved'],
-				]);
+                $all_tasks = get_all_tasks_from_queue($queue->friendlyName);
+                $unanswered_tasks = get_all_unaccepted_tasks_from_queue($queue->friendlyName);
 				?>
 
                 <tr>
@@ -74,9 +65,32 @@
 			<?php endforeach ?>
             </tbody>
         </table>
+    </div>
 
+    <div>
+        <h3>Current User: <?= $current_worker->friendlyName ?></h3>
 
-        <button style="display: block; margin-top: 2rem; ">Answer Next Call In Queue</button>
+        <ul>
+            <?php foreach($current_worker_reservations as $reservation): ?>
+            <li>
+                Status: <?= $reservation->reservationStatus ?>
+
+            <?php if($reservation->reservationStatus === 'pending') :?>
+                <form method="post" action="reservation-form-submit.php">
+                    <input name="reservationsid" value="<?= $reservation->sid ?>" hidden />
+
+                    <div>
+                        <label for="reservation-accept">Accept?</label>
+                        <input name="accept" type="checkbox" value="1" id="reservation-accept" />
+                    </div>
+
+                    <button type="submit">Submit</button>
+                </form>
+            <?php endif; ?>
+            </li>
+
+            <?php endforeach; ?>
+        </ul>
     </div>
 
 <?php foreach ($task_queues as $queue): ?>
@@ -94,11 +108,7 @@
                 </thead>
                 <tbody>
 
-                <?php
-				$all_workers = $workspace->workers->read([
-					'TaskQueueName' => $queue->friendlyName
-				])
-                ?>
+                <?php $all_workers = get_all_workers_from_queue($queue->friendlyName); ?>
 
                 <?php foreach($all_workers as $worker): ?>
                     <tr>
@@ -124,11 +134,7 @@
                 </thead>
                 <tbody>
 
-				<?php
-				$all_tasks = $workspace->tasks->read([
-					'TaskQueueName' => $queue->friendlyName
-				])
-				?>
+				<?php $all_tasks = get_all_tasks_from_queue($queue->friendlyName); ?>
 
                 <?php if (!empty($all_tasks)) : ?>
 
