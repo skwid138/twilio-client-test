@@ -19,14 +19,15 @@ function accept_reservation() {
 
 	$agent_phone_number = JSON_Decode($current_worker->attributes)->phone_number;
 
-	$call_url = ''; //@TODO A valid TwiML URI that is executed on the answering Worker's leg.
+	//@TODO A valid TwiML URI that is executed on the answering Worker's leg.
+	$call_url = 'https://3d34a968.ngrok.io/call.php';
 
 	return $workspace->workers($current_worker->sid)->reservations($reservation_sid)->update(
 		[
 			'reservationStatus' => 'accepted',
 			'instruction' => 'call',
-			'callFrom' => '+15558675310',
-			'callTo' => $agent_phone_number,
+			'callFrom' => '+12402215042', // what appears on the caller ID
+			'callTo' => $agent_phone_number, // this is optional
 			'callUrl' => $call_url,
 			//'callStatusCallbackUrl' => 'http://example.com/agent_answer_status_callback',
 			'callAccept' => 'true'

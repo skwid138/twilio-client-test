@@ -69,8 +69,34 @@
 
     <div>
         <h3>Current User: <?= $current_worker->friendlyName ?></h3>
+        <h4>Status: <span id="current-activity"></span></h4>
+        <?php /* <?= $current_worker->activityName ?> */ ?>
 
-        <ul>
+        <form>
+            <label for="agent-status">Update Status</label>
+            <select id="agent-status"></select>
+
+            <button type="submit" id="update-activity-button">Update Status</button>
+        </form>
+
+
+        <div style="margin-top: 3rem;">
+            <button id="newTaskButton">Create New Task/Call</button>
+        </div>
+
+        <div id="newReservationAccept" style="margin-top: 3rem;">
+            <button id="newReservationAcceptButton">Accept Reservation</button>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <ul id="reservation-list">
+
+            </ul>
+        </div>
+
+
+
+        <ul style="display: none;">
             <?php foreach($current_worker_reservations as $reservation): ?>
             <li>
                 Status: <?= $reservation->reservationStatus ?>
@@ -162,9 +188,13 @@
 
 
 
+    <!--  Allows updating worker status, worker reservations, and use of taskqueue  -->
+    <script type="text/javascript" src="//media.twiliocdn.com/taskrouter/js/v1.13/taskrouter.min.js"></script>
 
     <script type="text/javascript" src="//media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="quickstart.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="quickstart.js"></script>
+
+    <script type="text/javascript" src="app.js"></script>
 </body>
 </html>
